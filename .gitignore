@@ -160,5 +160,9 @@ airflow/www/static/coverage/
 airflow/www/static/dist
 
 /logs/
+/data/
 airflow-webserver.pid
 standalone_admin_password.txt
+
+# BigQuery Secret
+/secrets/
