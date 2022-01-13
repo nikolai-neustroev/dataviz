@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  airflow:
+    build:
+      context: .
+      dockerfile: airflow.Dockerfile
+
+  postgres:
+    image: postgres:9.6.24
+
+  grafana:
+    image: grafana/grafana-oss:8.3.3
