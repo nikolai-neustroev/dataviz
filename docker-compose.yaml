@@ -290,6 +290,11 @@ services:
     ports:
       - 8081:8080
 
+  grafana:
+    image: grafana/grafana-oss:8.3.3
+    ports:
+      - 3000:3000
+
 volumes:
   postgres-airflow-volume:
   postgres-dataviz-volume:
