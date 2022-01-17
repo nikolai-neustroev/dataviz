@@ -7,9 +7,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 import pandas as pd
+import sqlalchemy
 
 
 SERVICE_ACCOUNT_JSON = Variable.get("google_application_credentials")
+DATABASE_URL = Variable.get("database_url")
 PROJECT =  'bigquery-public-data'
 DATASET_ID = 'covid19_ecdc_eu'
 TABLE_ID = 'covid_19_geographic_distribution_worldwide'
@@ -26,15 +28,18 @@ FIELDS = [
 ]
 
 
-def to_csv():
+def extract():
     client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON)
     QUERY = f"""
     SELECT {', '.join(FIELDS)} 
     FROM `{PROJECT}.{DATASET_ID}.{TABLE_ID}`
     """
     df = client.query(QUERY).to_dataframe()
-    df.to_csv('/opt/airflow/data/extracted_data.csv', index=False, header=True)
-    logging.info(f'Table {TABLE_ID} successfully saved as CSV.')
+
+    engine = sqlalchemy.create_engine(DATABASE_URL)
+    with engine.connect() as connection:
+        df.to_sql(TABLE_ID, connection, if_exists='replace')
+    logging.info(f'Table {TABLE_ID} successfully stored in database.')
 
 
 with DAG(
@@ -43,6 +48,6 @@ with DAG(
     schedule_interval=None,
     catchup=False
 ) as dag:
-    task = PythonOperator(task_id="to_csv", python_callable=to_csv)
+    extraction = PythonOperator(task_id="extract", python_callable=extract)
 
-task
+extraction

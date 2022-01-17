@@ -58,6 +58,7 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_VAR_GOOGLE_APPLICATION_CREDENTIALS: '/home/secrets/secret.json'
+    AIRFLOW_VAR_DATABASE_URL: 'postgresql+psycopg2://user:pass@db/dataviz'
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -80,7 +81,7 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
+      - postgres-airflow-volume:/var/lib/postgresql-airflow/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
@@ -269,5 +270,26 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: dataviz
+    volumes:
+      - postgres-dataviz-volume:/var/lib/postgresql-dataviz/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "dataviz", "-U", "user"]
+      interval: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
 volumes:
-  postgres-db-volume:
+  postgres-airflow-volume:
+  postgres-dataviz-volume:
