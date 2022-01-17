@@ -294,7 +294,13 @@ services:
     image: grafana/grafana-oss:8.3.3
     ports:
       - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - "./grafana.ini:/etc/grafana/grafana.ini"
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
 
 volumes:
   postgres-airflow-volume:
   postgres-dataviz-volume:
+  grafana-storage:
