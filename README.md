@@ -16,8 +16,21 @@ Dataviz exports data from BigQuery, forecast time series, and visualize them in 
 
 ## Using Dataviz
 Open Airflow UI at `0.0.0.0:8080`. Сonsequently run "extract", "training" and "inference" dags. 
-"extract" imports data from BigQuery to local Postres database.
-"training" training trains AutoARIMA forecaster for "daily_confirmed_cases" time series.
-"inference" creates forecast for configured horizon.
+
+"extract" imports data from BigQuery to local Postres database. "training" training trains AutoARIMA forecaster for "daily_confirmed_cases" time series. "inference" creates forecast for configured horizon.
 
 Further, open Grafana at `0.0.0.0:3000`. It will visualize actual and forecasted data for "daily_confirmed_cases".
+
+## Ways to improve performance
+### Model
+We could try different approaches to improve forecasting performance:
+- Compartmental epidemiological models, e.g. SEIRD
+- Fine-tuned ARIMA instead of AutoARIMA
+- Facebook Prophet
+- Stack different models to obtain better predictive performance
+
+### Infrastucture
+- Automate training set definition
+- Use model registry (e.g. MLFlow) instead of database for model storing
+- Log model validation in experiment tracking system instead of Airflow logs
+- Make more informative and prettier plots in Grafana
