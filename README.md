@@ -31,6 +31,7 @@ We could try different approaches to improve forecasting performance:
 
 ### Infrastucture
 - Automate training set definition
+- Use Apache Superset instead of Grafana
 - Use model registry (e.g. MLFlow) instead of database for model storing
 - Log model validation in experiment tracking system instead of Airflow logs
-- Make more informative and prettier plots in Grafana
+- Make more informative and prettier plots
